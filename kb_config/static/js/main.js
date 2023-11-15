@@ -80,7 +80,7 @@ Version         : 1.1
 		smartSpeed: 2000,
 		slideSpeed: 600,
 		autoplayHoverPause:true,
-		navText: ["<i class='far fa-angle-left'></i>", "<i class='far fa-angle-right'></i>"],
+		navText: ["<i class='fa-solid fa-chevron-left'></i>", "<i class='fa-solid fa-chevron-right'></i>"],
 		responsive: {
 			0: {
 				items: 1,
