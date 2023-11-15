@@ -2268,7 +2268,7 @@ p.privacy {
 ============== */
 
 .achievement-area {
-	background-image: url(../img/achievement.jpg);
+	background-image: url("/static/img/about/about-bg.jpg");
 	height: 250px;
 	background-size: cover;
 	background-position: center;
