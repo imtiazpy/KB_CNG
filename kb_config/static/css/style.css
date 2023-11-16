@@ -2707,6 +2707,17 @@ p.privacy {
 	margin-top: 25px;
 }
 
+.team-img-container {
+	height: 200px !important; 
+	overflow: hidden;
+}
+
+.team-img-container img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover; /* Maintain aspect ratio and cover the container */
+}
+
 .single-team-member .team-content {
 	position: absolute;
 	bottom: -75px;
