@@ -2883,10 +2883,11 @@ p.privacy {
 */
 
 .contact-section {
-	background-image: url(../img/achievement.jpg);
+	background-image: url("/static/img/services/services-bg.jpg");
 	background-attachment: fixed;
 	position: relative;
 	z-index: 1;
+	background-position: center;
 }
 
 .contact-content {
