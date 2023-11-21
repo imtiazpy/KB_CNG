@@ -1,0 +1,138 @@
+{% extends "management_base.html" %}
+
+{% load humanize %}
+
+{% block title %}
+Main Dashboard
+{% endblock %}
+
+{% block content %}
+
+<h3 class="fw-bolder">Fuel Type List</h3>
+<hr>
+<section class="py-1">
+  <div class="container">
+    <div class="card rounded-0 shadow-sm blur">
+      <div class="card-body">
+        <div class="container-fluid">
+          <div class="text-end mb-2" style="text-align: right">
+            <button type="button" class="btn btn-primary" id="add-new">
+              <i class="fa fa-plus"></i> Add New Fuel Type
+            </button>
+          </div>
+          <table class="table table-stripped table-bordered" id="petrol-table">
+            <colgroup>
+              <col width="5%">
+              <col width="15%">
+              <col width="25%">
+              <col width="30%">
+              <col width="15%">
+              <col width="10%">
+            </colgroup>
+            <thead>
+              <tr class="bg-primary bg-gradient text-light">
+                <th class="text-center">#</th>
+                <th class="text-center">Date Added</th>
+                <th class="text-center">Name</th>
+                <th class="text-center">Price</th>
+                <th class="text-center">Status</th>
+                <th class="text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for fuel in fuels %}
+              <tr>
+                <td class="text-center">{{forloop.counter}}</td>
+                <td class="">{{ fuel.date_created|date:"M d, Y H:i" }}</td>
+                <td class="">{{fuel}}</td>
+                <td class="text-end">{{ fuel.price|floatformat:2|intcomma }}/L</td>
+                <td class="text-center">
+                  {% if fuel.status == '1' %}
+                  <span class="badge bg-primary px-3 rounded-pill bg-gradient">Active</span> 
+                  {% else %}
+                  <span class="badge bg-default border text-dark px-3 rounded-pill bg-gradient">Inactive</span> 
+                  {% endif %}
+                </td>
+                <td class="text-center">
+                  <div class="dropdown">
+                    <button class="btn btn-light border bg-gradient btn-sm rounded-0 dropdown-toggle" type="button"
+                      id="petrolDD{{fuel.pk}}" data-bs-toggle="dropdown" aria-expanded="false">
+                      Action
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="petrolDD{{fuel.pk}}">
+                      <li><a class="dropdown-item view_detail" href="javascript:void(0)"
+                          data-url="#">View Data</a></li>
+                      <li><a class="dropdown-item edit-data" href="javascript:void(0)"
+                          data-url="#">Edit</a></li>
+                      <li><a class="dropdown-item delete-data" href="javascript:void(0)"
+                          data-url="#">Delete</a></li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+{% endblock content %}
+
+{% block extra_script %}
+<script>
+  $(function () {
+    $('#add-new').click(function () {
+      global_modal("Add New Petrol Type", "{% url 'manage_fuel' %}")
+    })
+    // $('table').find('td, th').addClass('align-middle px-2 py-1')
+    // $('.view_detail').click(function () {
+    //   uni_modal("View Petrol Details", $(this).attr('data-url'), 'modal-md')
+    // })
+    // $('.edit-data').click(function () {
+    //   uni_modal("Edit Petrol Details", $(this).attr('data-url'))
+    // })
+    // $('.delete-data').click(function () {
+    //   _conf("Are you sure to delete this Petrol Type?", "delete_data", ["'" + $(this).attr('data-url') + "'"])
+    // })
+    $('#petrol-table').dataTable({
+      "scrollX": true,
+      // columnDefs: [{
+      //   orderable: false,
+      //   targets: [5]
+      // }]
+    })
+  })
+
+  function delete_data($url) {
+    start_loader()
+    $.ajax({
+      header: {
+        'X-CSRFToken': '{{csrf_token}}',
+      },
+      url: $url,
+      dataType: 'json',
+      error: err => {
+        console.error(err)
+        alert("An error occurred")
+        end_loader()
+      },
+      success: function (resp) {
+        if (resp.status == 'success') {
+          location.reload()
+        } else if (!!resp.msg) {
+          alert(resp.msg)
+        } else {
+          alert("An error occurred")
+        }
+        end_loader()
+      }
+    })
+
+  }
+</script>
+
+{% endblock extra_script %}

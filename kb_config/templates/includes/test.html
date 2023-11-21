@@ -1,0 +1,32 @@
+<ul class="navbar-nav ms-auto me-5 mb-2 mb-lg-0" id="topNav">
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="{% url 'dashboard' %}">Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" id="upload-btn" aria-current="page" href="{% url 'fuel_list' %}">Fuel Types</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="upload-btn" aria-current="page" href="#">Stocks</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="upload-btn" aria-current="page" href="#">Inventory</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="upload-btn" aria-current="page" href="#">Sales</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="upload-btn" aria-current="page" href="#">Sales
+                Report</a>
+            </li>
+          </ul>
+
+          <ul class="navbar-nav d-flex flex-row">
+            {% if user.id %}
+            <li class="nav-item">
+              <a class="nav-link" href="#"><b>Howdy, {{user.username}}</b></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="{% url 'logout' %}">Logout</a>
+            </li>
+            {% endif %}
+          </ul>
