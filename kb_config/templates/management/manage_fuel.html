@@ -1,0 +1,65 @@
+<div class="container-fluid">
+  <form action="" id="petrol-form">
+    {% csrf_token %}
+    <div class="form-group mb-3">
+      <label for="name" class="control-label">Name</label>
+      <input type="text" id="name" name="name" required class="form-control form-control-sm rounded-0">
+    </div>
+    <div class="form-group mb-3">
+      <label for="description" class="control-label">Description</label>
+      <textarea rows="3" id="description" name="description" required
+        class="form-control form-control-sm rounded-0"></textarea>
+    </div>
+    <div class="form-group mb-3">
+      <label for="price" class="control-label">Price <small><em>per Liter</em></small></label>
+      <input step="any" type="number" id="price" name="price" required
+        class="form-control form-control-sm rounded-0 text-end">
+    </div>
+    <div class="form-group mb-3">
+      <label for="status" class="control-label">Status</label>
+      <select name="status" id="status" class="form-select form-select-sm rounded-0" required>
+        <option value="1" selected>Active</option>
+        <option value="0">Inactive</option>
+      </select>
+    </div>
+  </form>
+</div>
+
+
+<script>
+  $('#petrol-form').submit(function (e) {
+    e.preventDefault()
+    const _this = $(this)
+    var el = $('<div>')
+    el.addClass("alert alert-danger rounded-0 err-msg")
+    el.hide()
+    $('.err-msg').remove()
+    $.ajax({
+      url: "{% url 'add_fuel' %}",
+      method: 'POST',
+      data: _this.serialize(),
+      dataType: 'json',
+      error: err => {
+        el.text("An error occurred.")
+        _this.prepend(el)
+        el.show('slow')
+        $('html, body, modal').scrollTop(0)
+      },
+      success: function (res) {
+        if (res.status == 'success') {
+          location.reload()
+        } else if (!!res.msg) {
+          el.html(res.msg)
+          _this.prepend(el)
+          el.show('slow')
+          $('html, body, modal').scrollTop(0)
+        } else {
+          el.html("An error occurred.")
+          _this.prepend(el)
+          el.show('slow')
+          $('html, body, modal').scrollTop(0)
+        }
+      }
+    })
+  })
+</script>

@@ -1,0 +1,181 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="shortcut icon" href="" type="image/x-icon">
+
+  <title>
+    Login
+  </title>
+
+  <meta name="description" content="Gas Station in Chattogram" />
+
+  {# Font Awesome #}
+  <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
+
+
+  {# Stylesheets #}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+
+  <style>
+  body{
+    background-image:url('{% static "img/slider/slider-img-2.jpg" %}');
+    background-repeat:no-repeat;
+    background-size:cover;
+  }
+  </style>
+
+</head>
+
+<body>
+  <div id="preloader">
+    <div class="loader">
+      <div class="loader-rect"></div>
+      <div class="loader-rect"></div>
+      <div class="loader-rect"></div>
+      <div class="loader-rect"></div>
+    </div>
+  </div>
+  <div class="container my-5">
+    <div class="d-flex flex-column w-100 py-5 justify-content-center align-items-center">
+      <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+        <div class="card card-default rounded-0 shadow" style="background-color: rgba(0, 0, 0, 0.85);">
+          <div class="card-header">
+            <h4 class="card-title text-white"><b>Login</b></h4>
+          </div>
+          <div class="card-body">
+            <div class="container-fluid">
+              <form id="login-user" action="" method="POST">
+                {% csrf_token %}
+                <div class="mdc-layout-grid">
+                  <div class="mdc-layout-grid__inner">
+                    <div class="form-group mb-3">
+                      <label for="username" class="control-label text-white">Username</label>
+                      <input type="text" class="form-control rounded-0" autofocus name="username" id="username"
+                        required="required">
+                    </div>
+                    <div class="form-group mb-3">
+                      <label for="password" class="control-label text-white">Password</label>
+                      <input type="password" class="form-control rounded-0" autofocus name="password" id="password"
+                        required="required">
+                    </div>
+                    <div class="form-group mb-3">
+                      <div class="d-flex w-100 justify-content-between align-items-center">
+                        <div class="col-md-4">
+                          {% comment %} <a href="{% url 'register-page' %}">Signup</a> {% endcomment %}
+                        </div>
+                        <button class="btn btn-sm rounded-0 btn-primary">
+                          Login
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <a href="#top" class="go-top"><i class="fa-solid fa-level-up"></i></a>
+
+  {# JavaScript #}
+  <script data-cfasync="false" src="{% static 'js/email-decode.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/wow.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/jquery.waypoints.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/jquery.counterup.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/owl.carousel.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/magnific-popup.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/jquery.sticky.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/jquery.barfiller.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+
+
+  <script>
+
+    const loader = $('<div>')
+    loader.attr('id', 'pre-loader')
+    loader.html('<div class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>')
+
+    window.start_loader = function () {
+      $('body').removeClass('loading')
+      if ($('#pre-loader').length > 0)
+        $('#pre-loader').remove();
+      $('body').append(loader)
+      $('body').addClass('loading')
+    }
+    window.end_loader = function () {
+      if ($('#pre-loader').length > 0)
+        $('#pre-loader').remove();
+      $('body').removeClass('loading')
+    }
+
+
+
+    $(function () {
+      $('#login-user').submit(function (e) {
+        e.preventDefault();
+        var _this = $(this)
+        $('.err-msg').remove();
+        var el = $('<div>')
+        el.addClass("alert alert-danger err-msg")
+        el.hide()
+        if (_this[0].checkValidity() == false) {
+          _this[0].reportValidity();
+          return false;
+        }
+        start_loader();
+        $.ajax({
+          headers: {
+            "X-CSRFToken": '{{csrf_token}}'
+          },
+          url: "{% url 'login_user' %}",
+          data: new FormData($(this)[0]),
+          cache: false,
+          contentType: false,
+          processData: false,
+          method: 'POST',
+          type: 'POST',
+          dataType: 'json',
+          error: err => {
+            alert("An error occured", 'error');
+            end_loader();
+          },
+          success: function (resp) {
+            if (typeof resp == 'object' && resp.status == 'success') {
+              el.removeClass("alert alert-danger err-msg")
+              location.href = "{% url 'dashboard' %}"
+            } else if (resp.status == 'failed' && !!resp.msg) {
+              el.text(resp.msg)
+            } else {
+              el.text("An error occured", 'error');
+              end_loader();
+              console.err(resp)
+            }
+            _this.prepend(el)
+            el.show('slow')
+            $("html, body, .modal").scrollTop(0);
+            end_loader()
+          }
+        })
+      })
+    })
+  </script>
+
+
+</body>
+
+</html>
