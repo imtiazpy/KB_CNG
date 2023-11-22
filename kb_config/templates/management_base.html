@@ -114,6 +114,44 @@
     </div>
   </div>
 
+  {# Confirm Modal #}
+  <div class="modal fade" id="confirm-modal" role='dialog'>
+    <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+        <div class="modal-content rounded-0">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmation</h5>
+            </div>
+            <div class="modal-body">
+                <div id="delete-content"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-flat btn-success rounded-0" id='confirm'
+                    onclick="">Continue</button>
+                <button type="button" class="btn btn-sm btn-flat btn-danger border rounded-0"
+                    data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Toast #}
+<div class="modal fade" id="toast-modal" role='dialog'>
+  <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+      <div class="modal-content rounded-0 bg-danger text-white">
+          <div class="modal-header">
+              <h5 class="modal-title text-white">Error</h5>
+          </div>
+          <div class="modal-body">
+              <div id="error-content"></div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-sm btn-flat btn-danger border rounded-0"
+                  data-dismiss="modal">Close</button>
+          </div>
+      </div>
+  </div>
+</div>
+
 
   {# JavaScript #}
   <script data-cfasync="false" src="{% static 'js/email-decode.min.js' %}"></script>
@@ -144,7 +182,7 @@
       $.ajax({
         url: url,
         error: err => {
-          alert("An error occured")
+          alert(err)
         },
         success: function (res) {
           if (res) {
@@ -160,6 +198,27 @@
         }
       })
     }
+
+    const confirm_modal = (title = '', url = '', actionFunction) => {
+
+      if (typeof actionFunction === 'function') {
+        $('#confirm-modal #confirm').on('click', function() {
+          actionFunction(url);
+        });
+
+        $('#confirm-modal #delete-content').html(title)
+        $('#confirm-modal').modal('show')
+      } else {
+        $('#toast-modal #error-content').html("Invalid Action")
+        $('#toast-modal').modal('show');
+      }
+    }
+
+    const toast_modal = (error) => {
+      $('#toast-modal #error-content').html(error)
+      $('#toast-modal').modal('show');
+    }
+
   </script>
 
   {% block extra_script %}
