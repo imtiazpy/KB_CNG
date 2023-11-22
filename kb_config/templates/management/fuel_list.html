@@ -16,7 +16,7 @@ Main Dashboard
       <div class="card-body">
         <div class="container-fluid">
           <div class="text-end mb-2" style="text-align: right">
-            <button type="button" class="btn btn-primary" id="add-new">
+            <button type="button" class="btn btn-success" id="add-new">
               <i class="fa fa-plus"></i> Add New Fuel Type
             </button>
           </div>
@@ -48,25 +48,21 @@ Main Dashboard
                 <td class="text-end">{{ fuel.price|floatformat:2|intcomma }}/L</td>
                 <td class="text-center">
                   {% if fuel.status == '1' %}
-                  <span class="badge bg-primary px-3 rounded-pill bg-gradient">Active</span> 
+                  <span class="badge bg-primary px-3 py-2 rounded-pill bg-success">Active</span> 
                   {% else %}
-                  <span class="badge bg-default border text-dark px-3 rounded-pill bg-gradient">Inactive</span> 
+                  <span class="badge bg-default border text-dark px-3 py-3 rounded-pill bg-danger">Inactive</span> 
                   {% endif %}
                 </td>
                 <td class="text-center">
                   <div class="dropdown">
-                    <button class="btn btn-light border bg-gradient btn-sm rounded-0 dropdown-toggle" type="button"
-                      id="petrolDD{{fuel.pk}}" data-bs-toggle="dropdown" aria-expanded="false">
-                      Action
+                    <button class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                      <i class="fa-solid fa-ellipsis-vertical"></i>
                     </button>
-                    <ul class="dropdown-menu" aria-labelledby="petrolDD{{fuel.pk}}">
-                      <li><a class="dropdown-item view_detail" href="javascript:void(0)"
-                          data-url="#">View Data</a></li>
-                      <li><a class="dropdown-item edit-data" href="javascript:void(0)"
-                          data-url="#">Edit</a></li>
-                      <li><a class="dropdown-item delete-data" href="javascript:void(0)"
-                          data-url="#">Delete</a></li>
-                    </ul>
+                    <div class="dropdown-menu">
+                      <a class="dropdown-item view-detail text-info" href="javascript:void(0)" data-url="{% url 'fuel_detail' fuel.pk %}"><i class="fa-solid fa-circle-info"></i> View Detail</a>
+                      <a class="dropdown-item edit-data text-success" href="javascript:void(0)" data-url="{% url 'manage_fuel_edit' fuel.pk %}"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
+                      <a class="dropdown-item delete-data text-danger" href="javascript:void(0)" data-url="{% url 'delete_fuel' fuel.pk %}"><i class="fa-solid fa-trash"></i> Delete</a>
+                    </div>
                   </div>
                 </td>
               </tr>
@@ -89,46 +85,38 @@ Main Dashboard
       global_modal("Add New Petrol Type", "{% url 'manage_fuel' %}")
     })
     // $('table').find('td, th').addClass('align-middle px-2 py-1')
-    // $('.view_detail').click(function () {
-    //   uni_modal("View Petrol Details", $(this).attr('data-url'), 'modal-md')
-    // })
-    // $('.edit-data').click(function () {
-    //   uni_modal("Edit Petrol Details", $(this).attr('data-url'))
-    // })
-    // $('.delete-data').click(function () {
-    //   _conf("Are you sure to delete this Petrol Type?", "delete_data", ["'" + $(this).attr('data-url') + "'"])
-    // })
+    $('.view-detail').click(function () {
+      global_modal("View Petrol Details", $(this).attr('data-url'))
+    })
+    $('.edit-data').click(function () {
+      global_modal("Edit Fuel Details", $(this).attr('data-url'))
+    })
+    $('.delete-data').click(function () {
+      confirm_modal("Are you sure to delete this Fuel?", $(this).attr('data-url'), delete_fuel)
+    })
     $('#petrol-table').dataTable({
       "scrollX": true,
-      // columnDefs: [{
-      //   orderable: false,
-      //   targets: [5]
-      // }]
     })
   })
 
-  function delete_data($url) {
-    start_loader()
+  const delete_fuel = (url) => {
     $.ajax({
       header: {
         'X-CSRFToken': '{{csrf_token}}',
       },
-      url: $url,
+      url: url,
       dataType: 'json',
       error: err => {
-        console.error(err)
-        alert("An error occurred")
-        end_loader()
+        toast_modal("An error occurred")
       },
-      success: function (resp) {
-        if (resp.status == 'success') {
+      success: function (res) {
+        if (res.status == 'success') {
           location.reload()
-        } else if (!!resp.msg) {
-          alert(resp.msg)
+        } else if (!!res.msg) {
+          toast_modal(res.msg)
         } else {
-          alert("An error occurred")
+          toast_modal("An error occurred")
         }
-        end_loader()
       }
     })
 

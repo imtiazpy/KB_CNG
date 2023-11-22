@@ -1,25 +1,35 @@
 <div class="container-fluid">
   <form action="" id="petrol-form">
     {% csrf_token %}
+    <input type="hidden" name="id" value="{{fuel.id}}">
     <div class="form-group mb-3">
       <label for="name" class="control-label">Name</label>
-      <input type="text" id="name" name="name" required class="form-control form-control-sm rounded-0">
+      <input type="text" id="name" name="name" value="{{ fuel.name }}" required class="form-control form-control-sm rounded-0">
     </div>
     <div class="form-group mb-3">
       <label for="description" class="control-label">Description</label>
       <textarea rows="3" id="description" name="description" required
-        class="form-control form-control-sm rounded-0"></textarea>
+        class="form-control form-control-sm rounded-0">{{ fuel.description }}</textarea>
     </div>
     <div class="form-group mb-3">
       <label for="price" class="control-label">Price <small><em>per Liter</em></small></label>
-      <input step="any" type="number" id="price" name="price" required
+      <input step="any" type="number" id="price" name="price" value="{{ fuel.price }}" required
         class="form-control form-control-sm rounded-0 text-end">
     </div>
     <div class="form-group mb-3">
       <label for="status" class="control-label">Status</label>
       <select name="status" id="status" class="form-select form-select-sm rounded-0" required>
+        {% if fuel.status == '1' %}
         <option value="1" selected>Active</option>
+        {% else %}
+        <option value="1">Active</option>
+        {% endif %}
+        
+        {% if fuel.status == '0' %}
+        <option value="0" selected>Inactive</option>
+        {% else %}
         <option value="0">Inactive</option>
+        {% endif %}
       </select>
     </div>
   </form>
@@ -35,7 +45,7 @@
     el.hide()
     $('.err-msg').remove()
     $.ajax({
-      url: "{% url 'add_fuel' %}",
+      url: "{% url 'save_fuel' %}",
       method: 'POST',
       data: _this.serialize(),
       dataType: 'json',
