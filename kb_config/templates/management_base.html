@@ -81,9 +81,11 @@
 
           })
         </script>
-        {% endif %} {% endfor %}
+        {% endif %} 
+        {% endfor %}
       </div>
-    </div>{% endif %}
+    </div>
+    {% endif %}
     {% block content %}
     {% endblock content %}
   </div>
@@ -137,7 +139,7 @@
 {# Toast #}
 <div class="modal fade" id="toast-modal" role='dialog'>
   <div class="modal-dialog modal-md modal-dialog-centered" role="document">
-      <div class="modal-content rounded-0 bg-danger text-white">
+      <div class="modal-content rounded-0 text-white">
           <div class="modal-header">
               <h5 class="modal-title text-white">Error</h5>
           </div>
