@@ -37,7 +37,7 @@ class Fuel(models.Model):
 class Stock(models.Model):
     fuel = models.ForeignKey(Fuel, on_delete=models.CASCADE, related_name='stocks')
     volume = models.FloatField(max_length=(15,2), default=0)
-    date_added = models.DateTimeField(default = timezone.now)
+    date = models.DateField(null=True, blank=True)
     date_created = models.DateTimeField(auto_now = True)
 
     class Meta:

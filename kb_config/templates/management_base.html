@@ -32,6 +32,7 @@
   <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
   <link rel="stylesheet" type="text/css" href="{% static 'css/responsive.css' %}">
   <link rel="stylesheet" type="text/css" href="{% static 'DataTables/datatables.min.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'select2/dist/css/select2.min.css' %}">
 
   {% block extra_css %}
   {% endblock extra_css %}
@@ -167,6 +168,7 @@
   <script type="text/javascript" src="{% static 'js/jquery.sticky.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/jquery.barfiller.js' %}"></script>
   <script type="text/javascript" src="{% static 'DataTables/datatables.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'select2/dist/js/select2.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
 
   <script>
@@ -179,12 +181,17 @@
       })
     })
 
+    const toast_modal = (error) => {
+      $('#toast-modal #error-content').html(error)
+      $('#toast-modal').modal('show');
+    }
+
 
     const global_modal = (title = '', url = '') => {
       $.ajax({
         url: url,
         error: err => {
-          alert(err)
+          toast_modal(err)
         },
         success: function (res) {
           if (res) {
@@ -216,9 +223,26 @@
       }
     }
 
-    const toast_modal = (error) => {
-      $('#toast-modal #error-content').html(error)
-      $('#toast-modal').modal('show');
+    const delete_data = (url) => {
+      $.ajax({
+        header: {
+          'X-CSRFToken': '{{csrf_token}}',
+        },
+        url: url,
+        dataType: 'json',
+        error: err => {
+          toast_modal("An error occurred")
+        },
+        success: function (res) {
+          if (res.status == 'success') {
+            location.reload()
+          } else if (!!res.msg) {
+            toast_modal(res.msg)
+          } else {
+            toast_modal("An error occurred")
+          }
+        }
+      })
     }
 
   </script>

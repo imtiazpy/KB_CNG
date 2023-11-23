@@ -3,7 +3,7 @@
 {% load humanize %}
 
 {% block title %}
-Main Dashboard
+Fuel Types
 {% endblock %}
 
 {% block content %}
@@ -82,45 +82,24 @@ Main Dashboard
 <script>
   $(function () {
     $('#add-new').click(function () {
-      global_modal("Add New Petrol Type", "{% url 'manage_fuel' %}")
+      global_modal("Add New Fuel Type", "{% url 'manage_fuel' %}")
     })
-    // $('table').find('td, th').addClass('align-middle px-2 py-1')
     $('.view-detail').click(function () {
-      global_modal("View Petrol Details", $(this).attr('data-url'))
+      global_modal("View Fuel Details", $(this).attr('data-url'))
     })
     $('.edit-data').click(function () {
       global_modal("Edit Fuel Details", $(this).attr('data-url'))
     })
     $('.delete-data').click(function () {
-      confirm_modal("Are you sure to delete this Fuel?", $(this).attr('data-url'), delete_fuel)
+      confirm_modal("Are you sure to delete this Fuel?", $(this).attr('data-url'), delete_data)
     })
     $('#petrol-table').dataTable({
       "scrollX": true,
+      "scrollY": "200px",
     })
   })
 
-  const delete_fuel = (url) => {
-    $.ajax({
-      header: {
-        'X-CSRFToken': '{{csrf_token}}',
-      },
-      url: url,
-      dataType: 'json',
-      error: err => {
-        toast_modal("An error occurred")
-      },
-      success: function (res) {
-        if (res.status == 'success') {
-          location.reload()
-        } else if (!!res.msg) {
-          toast_modal(res.msg)
-        } else {
-          toast_modal("An error occurred")
-        }
-      }
-    })
-
-  }
+  
 </script>
 
 {% endblock extra_script %}
