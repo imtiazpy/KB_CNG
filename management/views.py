@@ -176,3 +176,8 @@ def stock_delete_view(request, pk=None):
   
   return HttpResponse(json.dumps(res), content_type='application/json')
 
+@login_required
+def inventory_view(request):
+  fuels = Fuel.objects.filter(status=1)
+  return render(request, 'management/inventory.html', {'fuels': fuels})
+
