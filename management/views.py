@@ -7,8 +7,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 import json
 
-from .models import Fuel
-from .forms import SaveFuelForm
+from .models import Fuel, Stock
+from .forms import SaveFuelForm, SaveStockForm
 
 class Dashboard(LoginRequiredMixin, generic.View):
 
@@ -41,6 +41,7 @@ def fuel_list_view(request):
 
 @login_required
 def manage_fuel_view(request, pk=None):
+  """This view is used for rendering form for both addition and editing of the Fuel"""
   context = {}
   if pk is not None:
     context['fuel'] = Fuel.objects.get(id=pk)
@@ -56,6 +57,7 @@ def fuel_detail_view(request, pk=None):
 
 @login_required
 def save_fuel_view(request):
+  """view for both the creation and editing of the fuel"""
   res = {'status': 'failed', 'msg': ''}
   if not request.method == 'POST':
     res['msg'] = 'No Data was sent'
@@ -101,3 +103,76 @@ def fuel_delete_view(request, pk=None):
       res['msg'] = f"Error deleting Fuel: {str(e)}"
   
   return HttpResponse(json.dumps(res), content_type='application/json')
+
+@login_required
+def stock_list_view(request):
+  stocks = Stock.objects.all()
+  return render(request, 'management/stock_list.html', {'stocks': stocks})
+
+def manage_stock_view(request, pk=None):
+  """View for rendering form for Addition and Editing of Stock"""
+  context = {}
+  if pk is not None:
+    context['stock'] = Stock.objects.get(id=pk)
+  context['fuels'] = Fuel.objects.filter(status=1)
+  return render(request, 'management/manage_stock.html', context)
+
+
+@login_required
+def save_stock_view(request, pk=None):
+  """view for both the creation and editing of Stock"""
+
+  res = {'status':'failed', 'msg':''}
+  if not request.method =='POST':
+    res['msg'] = "No data send on this request"
+  else:
+    post = request.POST
+    if post['id'] != '':
+      stock = Stock.objects.get(id = post['id'])
+      form = SaveStockForm(request.POST, instance=stock)
+    else:
+      form = SaveStockForm(request.POST)
+    if form.is_valid():
+      form.save()
+      if post['id'] == '':
+        messages.success(request, "Stock Record has been added successfully")
+      else:
+        messages.success(request, "Stock Record has been updated successfully")
+      res['status'] = 'success'
+    else:
+      for field in form:
+        for error in field.errors:
+          if not res['msg'] == '':
+            res['msg'] += str('<br />')
+          res['msg'] += str(f"[{field.label}] {error}")
+  return HttpResponse(json.dumps(res), content_type="application/json")
+
+
+@login_required
+def stock_detail_view(request, pk=None):
+  context = {}
+  if pk is not None:
+    stock = Stock.objects.get(id=pk)
+    context['stock'] = stock
+  
+  return render(request, 'management/stock_detail.html', context)
+
+
+
+@login_required
+def stock_delete_view(request, pk=None):
+  res = {'status': '', 'msg': ''}
+  if pk is None:
+    res['msg'] = "Invalid Stock ID"
+  
+  else:
+    stock_instance = get_object_or_404(Stock, pk=pk)
+    try:
+      stock_instance.delete()
+      res['status'] = 'success'
+      messages.success(request, "Stock has been deleted successfully")
+    except Exception as e:
+      res['msg'] = f"Error deleting Stock: {str(e)}"
+  
+  return HttpResponse(json.dumps(res), content_type='application/json')
+
