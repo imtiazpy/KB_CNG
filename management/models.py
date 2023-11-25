@@ -53,8 +53,7 @@ class Sale(models.Model):
     date = models.DateField(null=True, blank = True)
     customer_name = models.CharField(max_length=250)
     price = models.FloatField(max_length=(15,2), default=0)
-    amount = models.FloatField(max_length=(15,2), default=0)
-    date_sold = models.DateTimeField(default = timezone.now)
+    total_amount = models.FloatField(max_length=(15,2), default=0)
     date_created = models.DateTimeField(auto_now = True)
 
     class Meta:

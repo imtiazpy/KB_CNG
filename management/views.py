@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
 from django.views import generic
 from django.db.models import Sum
@@ -7,8 +7,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 import json
 
-from .models import Fuel, Stock
-from .forms import SaveFuelForm, SaveStockForm
+from .models import Fuel, Stock, Sale
+from .forms import SaveFuelForm, SaveStockForm, SaveSaleForm
 
 class Dashboard(LoginRequiredMixin, generic.View):
 
@@ -18,7 +18,8 @@ class Dashboard(LoginRequiredMixin, generic.View):
     fuels = Fuel.objects.filter(status=1)
 
     try:
-      total_sale = Fuel.sales.aggregate(Sum('amount'))['amount_sum']
+      active_fuels = Fuel.objects.filter(status=1)
+      total_sale = Sale.objects.filter(fuel__id__in = active_fuels).aggregate(Sum('total_amount'))['total_amount__sum']
       if total_sale is None:
         total_sale = 0
     except:
@@ -109,6 +110,7 @@ def stock_list_view(request):
   stocks = Stock.objects.all()
   return render(request, 'management/stock_list.html', {'stocks': stocks})
 
+@login_required
 def manage_stock_view(request, pk=None):
   """View for rendering form for Addition and Editing of Stock"""
   context = {}
@@ -178,6 +180,86 @@ def stock_delete_view(request, pk=None):
 
 @login_required
 def inventory_view(request):
+  """Inventory listing view"""
   fuels = Fuel.objects.filter(status=1)
   return render(request, 'management/inventory.html', {'fuels': fuels})
 
+
+@login_required
+def sales_list_view(request):
+  """Sales listing view"""
+  sales = Sale.objects.filter(fuel__status = 1)
+
+  return render(request, 'management/sales_list.html', {'sales': sales})
+
+
+@login_required
+def sales_manage_view(request, pk=None):
+  """View to render form for both Sales create and edit"""
+
+  context = {}
+
+  if pk is not None:
+    context['sale'] = Sale.objects.get(id=pk)
+  context['fuels'] = Fuel.objects.filter(status=1)
+
+  return render(request, 'management/manage_sale.html', context)
+
+
+@login_required
+def sales_save_view(request, pk=None):
+  """view for Sales create and edit"""
+
+  res = {'status': 'failed', 'msg': ''}
+
+  if request.method != 'POST':
+    res['msg'] = 'No data send on this request'
+  
+  else:
+    post = request.POST
+
+    if post['id'] != '':
+      sale = Sale.objects.get(id = post['id'])
+      form = SaveSaleForm(request.POST, instance=sale)
+    else:
+      form = SaveSaleForm(request.POST)
+    
+    if form.is_valid():
+      form.save()
+      if post['id'] == '':
+        messages.success(request, "Sale Record has been added successfully")
+      else:
+        messages.success(request, "Sale Record has been updated successfully")
+      res['status'] = 'success'
+    else:
+      for field in form:
+        for error in field.errors:
+          if not res['msg'] == '':
+            res['msg'] += str('<br />')
+          res['msg'] += str(f"[{field.label}] {error}")
+  return JsonResponse(res)
+
+
+def sales_detail_view(request, pk=None):
+  context = {}
+  if pk is not None:
+    context['sale'] = Sale.objects.get(id=pk)
+  return render(request, 'management/sale_detail.html', context)
+
+
+
+def sales_delete_view(request, pk=None):
+  res = {'status': '', 'msg': ''}
+  if pk is None:
+    res['msg'] = "Invalid Sale ID"
+  
+  else:
+    sale_instance = get_object_or_404(Sale, pk=pk)
+    try:
+      sale_instance.delete()
+      res['status'] = 'success'
+      messages.success(request, "Sale has been deleted successfully")
+    except Exception as e:
+      res['msg'] = f"Error deleting Sale: {str(e)}"
+  
+  return JsonResponse(res)
