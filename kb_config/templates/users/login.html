@@ -105,70 +105,41 @@
 
 
   <script>
-
-    const loader = $('<div>')
-    loader.attr('id', 'pre-loader')
-    loader.html('<div class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>')
-
-    window.start_loader = function () {
-      $('body').removeClass('loading')
-      if ($('#pre-loader').length > 0)
-        $('#pre-loader').remove();
-      $('body').append(loader)
-      $('body').addClass('loading')
-    }
-    window.end_loader = function () {
-      if ($('#pre-loader').length > 0)
-        $('#pre-loader').remove();
-      $('body').removeClass('loading')
-    }
-
-
-
     $(function () {
       $('#login-user').submit(function (e) {
         e.preventDefault();
-        var _this = $(this)
+        const _this = $(this)
         $('.err-msg').remove();
-        var el = $('<div>')
+        const el = $('<div>')
         el.addClass("alert alert-danger err-msg")
         el.hide()
         if (_this[0].checkValidity() == false) {
           _this[0].reportValidity();
           return false;
         }
-        start_loader();
         $.ajax({
-          headers: {
-            "X-CSRFToken": '{{csrf_token}}'
-          },
           url: "{% url 'login_user' %}",
-          data: new FormData($(this)[0]),
-          cache: false,
-          contentType: false,
-          processData: false,
+          data: _this.serialize(),
           method: 'POST',
-          type: 'POST',
           dataType: 'json',
           error: err => {
-            alert("An error occured", 'error');
-            end_loader();
+            el.text("An error occurred.", err)
+            _this.prepend(el)
+            el.show('slow')
+            $('html, body, modal').scrollTop(0)
           },
-          success: function (resp) {
-            if (typeof resp == 'object' && resp.status == 'success') {
+          success: res => {
+            if (typeof res == 'object' && res.status == 'success') {
               el.removeClass("alert alert-danger err-msg")
               location.href = "{% url 'dashboard' %}"
-            } else if (resp.status == 'failed' && !!resp.msg) {
-              el.text(resp.msg)
+            } else if (res.status == 'failed' && !!res.msg) {
+              el.text(res.msg)
             } else {
-              el.text("An error occured", 'error');
-              end_loader();
-              console.err(resp)
+              el.text("An error occured");
             }
             _this.prepend(el)
             el.show('slow')
             $("html, body, .modal").scrollTop(0);
-            end_loader()
           }
         })
       })

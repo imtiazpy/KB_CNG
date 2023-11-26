@@ -239,7 +239,7 @@ def sales_save_view(request, pk=None):
           res['msg'] += str(f"[{field.label}] {error}")
   return JsonResponse(res)
 
-
+@login_required
 def sales_detail_view(request, pk=None):
   context = {}
   if pk is not None:
@@ -247,7 +247,7 @@ def sales_detail_view(request, pk=None):
   return render(request, 'management/sale_detail.html', context)
 
 
-
+@login_required
 def sales_delete_view(request, pk=None):
   res = {'status': '', 'msg': ''}
   if pk is None:

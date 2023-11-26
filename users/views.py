@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 import json
 
 
@@ -26,7 +26,7 @@ def login_user(request):
         resp['msg'] = "Incorrect username or password"
     else:
       resp['msg'] = "Incorrect username or password"
-  return HttpResponse(json.dumps(resp),content_type='application/json')
+  return JsonResponse(resp)
 
 
 
