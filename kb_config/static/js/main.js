@@ -1,32 +1,3 @@
-/* =====================================================
-Template Name   : Refuel
-Description     : Petrol Pump and Gas Station  HTML5 Template
-Author          : Youtoview
-Version         : 1.1
-=======================================================*/
-
-
-/* [Table of Contents]
-
-  - Mobile Menu 
-  - Header Search Form 
-
-  - Owl Carousel
-        - Hero Area Slider
-        - Testimonial Carousel
-		- Client Carousel
-  - Sticky Area
-  - Progress Bar 
-  - Counter Up 
-  - Wow Animation 
-  - Scroll to the Top
-  - Active & Remove Class
-  - Menu Active Color
-  - Preloader 
-
-*/
-
-
 (function ($) {
 	"use strict";
 
