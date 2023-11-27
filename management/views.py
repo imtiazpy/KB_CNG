@@ -6,6 +6,7 @@ from django.db.models import Sum
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 import json
+from datetime import datetime
 
 from .models import Fuel, Stock, Sale
 from .forms import SaveFuelForm, SaveStockForm, SaveSaleForm
@@ -263,3 +264,28 @@ def sales_delete_view(request, pk=None):
       res['msg'] = f"Error deleting Sale: {str(e)}"
   
   return JsonResponse(res)
+
+
+@login_required
+def sales_report_view(request, report_date=None):
+  context = {}
+
+  if report_date is not None:
+    report_date = datetime.strptime(report_date, "%Y-%m-%d")
+  else:
+    report_date = datetime.now()
+  
+  year = report_date.strftime("%Y")
+  month = report_date.strftime("%m")
+  day = report_date.strftime("%d")
+
+  fuels = Fuel.objects.filter(status=1)
+  sales = Sale.objects.filter(fuel__id__in=fuels, date__month = month, date__day=day, date__year=year)
+
+  context['report_date'] = report_date
+  context['sales'] = sales
+  context['total_sale'] = sales.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+
+
+
+  return render(request, 'management/sales_report.html', context)

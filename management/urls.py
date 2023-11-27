@@ -25,5 +25,8 @@ urlpatterns = [
   path('sales/manage/<int:pk>/', views.sales_manage_view, name='manage_sale_edit'),
   path('sales/add/', views.sales_save_view, name='save_sale'),
   path('sales/detail/<int:pk>/', views.sales_detail_view, name='sale_detail'),
-  path('sales/delete/<int:pk>/', views.sales_delete_view, name='delete_sale')
+  path('sales/delete/<int:pk>/', views.sales_delete_view, name='delete_sale'),
+
+  path('sales/report/', views.sales_report_view, name='sales_report_page'),
+  path('sales/report/<str:report_date>/', views.sales_report_view, name='sales_report')
 ]
