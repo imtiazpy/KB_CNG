@@ -115,8 +115,8 @@
     })
     $('#sale-form').submit(function (e) {
       e.preventDefault()
-      var _this = $(this)
-      var el = $('<div>')
+      const _this = $(this)
+      const el = $('<div>')
       el.addClass("alert alert-danger rounded-0 err-msg")
       el.hide()
       $('.err-msg').remove()
@@ -124,6 +124,17 @@
         _this[0].reportValidity()
         return false
       }
+
+      const volume = parseFloat($('#volume').val());
+
+      if (volume <= 0) {
+        el.text("Volume must be greater than 0.");
+        _this.prepend(el);
+        el.show('slow');
+        $('html, body, modal').scrollTop(0);
+        return false;
+      }
+
       $.ajax({
         url: "{% url 'save_sale' %}",
         method: 'POST',

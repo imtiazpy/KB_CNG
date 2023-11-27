@@ -56,8 +56,8 @@
     })
     $('#stock-form').submit(function (e) {
       e.preventDefault()
-      var _this = $(this)
-      var el = $('<div>')
+      const _this = $(this)
+      const el = $('<div>')
       el.addClass("alert alert-danger rounded-0 err-msg")
       el.hide()
       $('.err-msg').remove()
@@ -65,6 +65,18 @@
         _this[0].reportValidity()
         return false
       }
+
+      const volInput = _this.find('[name="volume"]');
+      const volValue = parseFloat(volInput.val());
+
+      if (isNaN(volValue) || volValue <= 0) {
+        el.text("Invalid volume. Please enter a value greater than 0.");
+        _this.prepend(el);
+        el.show('slow');
+        $('html, body, modal').scrollTop(0);
+        return;
+      }
+
       $.ajax({
         url: "{% url 'save_stock' %}",
         method: 'POST',
