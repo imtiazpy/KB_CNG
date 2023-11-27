@@ -1407,7 +1407,6 @@ button[type="submit"] {
 	font-weight: 600;
 	line-height: 120px;
 	background-color: #70C150;
-	background-image: url(../img/trans-bg.html);
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: center;
@@ -1449,7 +1448,6 @@ button[type="submit"] {
 ============== */
 
 .services-area {
-	background-image: url(../img/service-bg.png);
 	padding-bottom: 120px;
 	position: relative;
 	z-index: 1;
@@ -2138,21 +2136,9 @@ p.privacy {
 ==================== */
 
 .single-service-bg {
-	background-image: url(../img/service/1.jpg);
 	height: 325px;
 }
 
-.service-bg-2 {
-	background-image: url(../img/service/2.jpg);
-}
-
-.service-bg-3 {
-	background-image: url(../img/service/3.jpg);
-}
-
-.service-bg-4 {
-	background-image: url(../img/service/4.jpg);
-}
 
 #service-2 .single-service-area {
 	padding: 40px;
@@ -2500,7 +2486,6 @@ p.privacy {
 ============== */
 
 #cta-2.cta-area {
-	background-image: url(../img/divider.jpg);
 	background-attachment: fixed;
 	height: 300px;
 	display: flex;
@@ -2553,7 +2538,6 @@ p.privacy {
 */
 
 .choose-us-area {
-	background-image: url(../img/achievement.jpg);
 	background-size: cover;
 	background-position: center;
 	background-attachment: fixed;
@@ -2627,7 +2611,6 @@ p.privacy {
 }
 
 .spacer-bg {
-	/*	background-image: url(../img/divider.jpg);*/
 	background-attachment: fixed;
 	height: 300px;
 	display: flex;
@@ -3381,9 +3364,6 @@ a.reply-btn:hover{
 	margin-top: 30px;
 }
 
-.helpline-section {
-	background-image: url(../img/helpline.html);
-}
 
 .helpline-content h4 {
 	color: #ffff;
