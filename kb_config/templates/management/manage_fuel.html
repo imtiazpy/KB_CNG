@@ -44,6 +44,19 @@
     el.addClass("alert alert-danger rounded-0 err-msg")
     el.hide()
     $('.err-msg').remove()
+
+    // Check if price is a valid positive number
+    const priceInput = _this.find('[name="price"]');
+    const priceValue = parseFloat(priceInput.val());
+
+    if (isNaN(priceValue) || priceValue <= 0) {
+      el.text("Invalid price. Please enter a value greater than 0.");
+      _this.prepend(el);
+      el.show('slow');
+      $('html, body, modal').scrollTop(0);
+      return;
+    }
+
     $.ajax({
       url: "{% url 'save_fuel' %}",
       method: 'POST',
