@@ -7,6 +7,9 @@ name = "pypi"
 django = "==4.2"
 pillow = "*"
 fontawesomefree = "*"
+django-environ = "*"
+whitenoise = "*"
+gunicorn = "*"
 
 [dev-packages]
 
