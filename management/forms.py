@@ -52,3 +52,13 @@ class SaveSaleForm(forms.ModelForm):
       raise forms.ValidationError(f"Fuel with ID {fuel_id} does not exist.")
     except ValueError:
       raise forms.ValidationError("Invalid Fuel ID.")
+    
+  def clean_volume(self):
+    fuel_vol = Fuel.objects.get(id=self.data.get('fuel')).available()
+    volume = self.data.get('volume')
+
+   
+    if float(volume) <= float(fuel_vol):
+      return volume
+    else: 
+      raise forms.ValidationError(f"Fuel volume exceeds the limit. Available fuel - {fuel_vol} L")
