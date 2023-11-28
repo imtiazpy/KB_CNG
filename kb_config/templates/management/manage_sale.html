@@ -1,17 +1,5 @@
 {% load humanize %}
 
-<head>
-
-  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
-  <link rel="stylesheet" type="text/css" href="{% static 'css/magnific-popup.min.css' %}">
-  <link rel="stylesheet" type="text/css" href="{% static 'css/animate.css' %}">
-  <link rel="stylesheet" type="text/css" href="{% static 'css/barfiller.css' %}">
-  <link rel="stylesheet" type="text/css" href="{% static 'css/owl.carousel.css' %}">
-  <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
-  <link rel="stylesheet" type="text/css" href="{% static 'css/responsive.css' %}">
-  <link rel="stylesheet" type="text/css" href="{% static 'DataTables/datatables.min.css' %}">
-  <link rel="stylesheet" type="text/css" href="{% static 'select2/dist/css/select2.min.css' %}">
-
 <style>
   span.selection {
     display: block;
@@ -26,7 +14,7 @@
     flex-direction: column;
   }
 </style>
-</head>
+
 <div class="container-fluid">
   <form action="" id="sale-form">
     {% csrf_token %}
@@ -91,21 +79,6 @@
 
 
 
-<script data-cfasync="false" src="{% static 'js/email-decode.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/wow.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/jquery.waypoints.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/jquery.counterup.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/owl.carousel.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/magnific-popup.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/jquery.sticky.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/jquery.barfiller.js' %}"></script>
-<script type="text/javascript" src="{% static 'DataTables/datatables.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'select2/dist/js/select2.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
-
-
 <script>
   $(function () {
     $('#fuel').select2({
@@ -140,8 +113,8 @@
     $('#total-amount').on('input', function () {
       let total_amount = $('#total-amount').val()
       total_amount = total_amount > 0 ? total_amount : 0;
-      const price = $('[name="price"]').val()
-      let = price > 0 ? price : 0;
+      let price = $('[name="price"]').val()
+      price = price > 0 ? price : 0;
       const volume = parseFloat(total_amount) / parseFloat(price)
       $('[name="volume"]').val(parseFloat(volume).toFixed(2))
     })
