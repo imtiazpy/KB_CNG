@@ -1,1 +1,1 @@
-web: python manage.py migrate && gunicorn kb_config.wsgi
+web: python manage.py migrate && gunicorn kb_config.wsgi --log-file -
