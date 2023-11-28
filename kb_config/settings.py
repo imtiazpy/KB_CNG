@@ -35,6 +35,9 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 if env.list("CSRF_TRUSTED_ORIGINS", default=[]):
     CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS")
 
+if env.bool("CSRF_COOKIE_SECURE", default=False):
+    CSRF_COOKIE_SECURE = env.bool("CSRF_COOKIE_SECURE", default=False)
+
 
 # Application definition
 
