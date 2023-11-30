@@ -9,7 +9,7 @@ urlpatterns = [
     path('services/', include('services.urls')),
     path('teams/', include('team.urls')),
     path('contact/', include('contact.urls')),
-    path('kb-dash/', include('management.urls')),
+    path('kbdash/', include('management.urls')),
     path('auth/', include('users.urls')),
 ]
 
