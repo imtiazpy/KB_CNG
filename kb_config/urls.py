@@ -13,7 +13,7 @@ urlpatterns = [
     path('auth/', include('users.urls')),
 ]
 
-if settings.DEBUG:
+if settings.DEBUG == True:
     from django.conf.urls.static import static
     from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
