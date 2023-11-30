@@ -175,5 +175,5 @@ MEDIA_URL = "/media/"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = '/kb-dash/'
+LOGIN_REDIRECT_URL = '/kbdash/'
 LOGIN_URL = '/auth/login/'
