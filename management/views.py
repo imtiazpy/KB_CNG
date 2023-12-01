@@ -14,20 +14,16 @@ from .forms import SaveFuelForm, SaveStockForm, SaveSaleForm
 class Dashboard(LoginRequiredMixin, generic.View):
 
   def get(self, request, *args, **kwargs):
-    
-    total_fuel_count = Fuel.objects.filter(status = 1).count()
     fuels = Fuel.objects.filter(status=1)
-
     try:
-      active_fuels = Fuel.objects.filter(status=1)
-      total_sale = Sale.objects.filter(fuel__id__in = active_fuels).aggregate(Sum('total_amount'))['total_amount__sum']
+      total_sale = Sale.objects.filter(fuel__id__in = fuels).aggregate(Sum('total_amount'))['total_amount__sum']
       if total_sale is None:
         total_sale = 0
     except:
       total_sale = 0
 
     context = {
-      'total_fuel_count': total_fuel_count,
+      'total_fuel_count': fuels.count(),
       'fuels': fuels,
       'total_sale': total_sale,
     }
@@ -36,19 +32,17 @@ class Dashboard(LoginRequiredMixin, generic.View):
 
 @login_required
 def dashboard(request):
-  total_fuel_count = Fuel.objects.filter(status = 1).count()
   fuels = Fuel.objects.filter(status=1)
 
   try:
-    active_fuels = Fuel.objects.filter(status=1)
-    total_sale = Sale.objects.filter(fuel__id__in = active_fuels).aggregate(Sum('total_amount'))['total_amount__sum']
+    total_sale = Sale.objects.filter(fuel__id__in = fuels).aggregate(Sum('total_amount'))['total_amount__sum']
     if total_sale is None:
       total_sale = 0
   except:
     total_sale = 0
 
   context = {
-    'total_fuel_count': total_fuel_count,
+    'total_fuel_count': fuels.count(),
     'fuels': fuels,
     'total_sale': total_sale,
   }
