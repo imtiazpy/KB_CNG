@@ -29,8 +29,10 @@
   <link rel="stylesheet" type="text/css" href="{% static 'css/animate.css' %}">
   <link rel="stylesheet" type="text/css" href="{% static 'css/barfiller.css' %}">
   <link rel="stylesheet" type="text/css" href="{% static 'css/owl.carousel.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'select2/select2.min.css' %}">
   <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
   <link rel="stylesheet" type="text/css" href="{% static 'css/responsive.css' %}">
+  
 
 
   {% block extra_css %}
@@ -68,7 +70,12 @@
   <script type="text/javascript" src="{% static 'js/magnific-popup.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/jquery.sticky.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/jquery.barfiller.js' %}"></script>
+  <script type="text/javascript" src="{% static 'select2/dist/js/select2.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+  
+
+  {% block extra_script %}
+  {% endblock extra_script %}
 </body>
 
 </html>
