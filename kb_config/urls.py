@@ -10,7 +10,7 @@ urlpatterns = [
     path('teams/', include('team.urls')),
     path('contact/', include('contact.urls')),
     path('kbdash/', include('management.urls')),
-    path('auth/', include('users.urls')),
+    path('users/', include('users.urls')),
 ]
 
 if settings.DEBUG == True:

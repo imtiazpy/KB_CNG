@@ -1,11 +1,21 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse, JsonResponse
-import json
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 
 
 def login_page(request):
   return render(request, 'users/login.html')
+
+
+
+@login_required
+def profile_page_view(request):
+  if request.user.is_authenticated:
+    user = request.user
+
+    return render(request, 'users/profile_page.html', {'user': user})
+
 
 
 def login_user(request):

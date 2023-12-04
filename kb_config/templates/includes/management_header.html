@@ -40,7 +40,7 @@
                       <a class="nav-link" href="{% url 'sales_report_page' %}">Salse Report</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" href="#">{{ request.user.name }}</a>
+                      <a class="nav-link" href="{% url 'profile' %}">{{ request.user.name }}</a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link" href="{% url 'logout' %}">Logout</a>
