@@ -20,6 +20,7 @@
     {% csrf_token %}
     <input type="hidden" name="id" value="{{sale.id}}">
     <input type="hidden" name="price" value="{% if sale.price %}{{sale.price}}{% else %}0{% endif %}">
+    <input type="hidden" name="manager" value="{{ user }}">
 
     <div class="form-group mb-3">
       <label for="date" class="control-label">Date Added</label>

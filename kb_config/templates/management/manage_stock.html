@@ -17,6 +17,7 @@
   <form action="" id="stock-form">
     {% csrf_token %}
     <input type="hidden" name="id" value="{{stock.id}}">
+    <input type="hidden" name="manager" value="{{ user }}">
     <div class="form-group mb-3">
       <label for="date" class="control-label">Date Added</label>
       <input type="date" id="date" name="date" value="{{stock.date|date:'Y-m-d'}}" required
