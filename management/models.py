@@ -1,10 +1,13 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 
+USER = get_user_model()
+
 class Fuel(models.Model):
     """Model for Fuel"""
-
+    manager = models.ForeignKey(USER, on_delete=models.SET_NULL, null=True, related_name='user_fuels')
     name = models.CharField(max_length=100)
     description = models.TextField()
     status = models.CharField(max_length=2, choices=(('1', 'Active'), ('0', 'Inactive')), default=1)
@@ -15,7 +18,7 @@ class Fuel(models.Model):
         verbose_name_plural = "Fuel type list"
 
     def __str__(self):
-        return str(f"{self.name}")
+        return f"{self.name}"
 
     def available(self):
         try:
@@ -35,6 +38,7 @@ class Fuel(models.Model):
 
 
 class Stock(models.Model):
+    manager = models.ForeignKey(USER, on_delete=models.SET_NULL, null=True, related_name='user_stocks')
     fuel = models.ForeignKey(Fuel, on_delete=models.CASCADE, related_name='stocks')
     volume = models.FloatField(max_length=(15,2), default=0)
     date = models.DateField(null=True, blank=True)
@@ -48,6 +52,7 @@ class Stock(models.Model):
     
 
 class Sale(models.Model):
+    manager = models.ForeignKey(USER, on_delete=models.SET_NULL, null=True, related_name='user_sales')
     fuel = models.ForeignKey(Fuel, on_delete=models.CASCADE, related_name='sales')
     volume = models.FloatField(max_length=(15,2), default=0)
     date = models.DateField(null=True, blank = True)

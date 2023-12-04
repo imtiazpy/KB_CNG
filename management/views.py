@@ -62,6 +62,9 @@ def manage_fuel_view(request, pk=None):
   context = {}
   if pk is not None:
     context['fuel'] = Fuel.objects.get(id=pk)
+  
+  if request.user.is_authenticated:
+    context['user'] = request.user.id
   return render(request, 'management/manage_fuel.html', context)
 
 @login_required
@@ -133,6 +136,8 @@ def manage_stock_view(request, pk=None):
   if pk is not None:
     context['stock'] = Stock.objects.get(id=pk)
   context['fuels'] = Fuel.objects.filter(status=1)
+  if request.user.is_authenticated:
+    context['user'] = request.user.id
   return render(request, 'management/manage_stock.html', context)
 
 
@@ -204,8 +209,10 @@ def inventory_view(request):
 @login_required
 def sales_list_view(request):
   """Sales listing view"""
-  sales = Sale.objects.filter(fuel__status = 1)
-
+  if request.user.is_staff:
+    sales = Sale.objects.filter(fuel__status = 1)
+  else:
+    sales = Sale.objects.filter(manager=request.user, fuel__status = 1)
   return render(request, 'management/sales_list.html', {'sales': sales})
 
 
@@ -218,6 +225,9 @@ def sales_manage_view(request, pk=None):
   if pk is not None:
     context['sale'] = Sale.objects.get(id=pk)
   context['fuels'] = Fuel.objects.filter(status=1)
+
+  if request.user.is_authenticated:
+    context['user'] = request.user.id
 
   return render(request, 'management/manage_sale.html', context)
 
@@ -300,7 +310,5 @@ def sales_report_view(request, report_date=None):
   context['report_date'] = report_date
   context['sales'] = sales
   context['total_sale'] = sales.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
-
-
 
   return render(request, 'management/sales_report.html', context)

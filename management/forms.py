@@ -8,7 +8,7 @@ class SaveFuelForm(forms.ModelForm):
 
   class Meta:
     model = Fuel
-    fields = ('name', 'description', 'price', 'status')
+    fields = ('manager', 'name', 'description', 'price', 'status')
 
   def clean_name(self):
     name = self.cleaned_data['name']
@@ -31,7 +31,7 @@ class SaveStockForm(forms.ModelForm):
 
   class Meta:
     model = Stock
-    fields = ('fuel', 'volume', 'date')
+    fields = ('manager', 'fuel', 'volume', 'date')
   
   def clean_fuel(self):
     fuel_id = self.data.get('fuel')
@@ -52,7 +52,7 @@ class SaveStockForm(forms.ModelForm):
 class SaveSaleForm(forms.ModelForm):
   class Meta:
     model = Sale
-    fields = ('fuel', 'volume', 'date', 'customer_name', 'price', 'total_amount')
+    fields = ('manager', 'fuel', 'volume', 'date', 'customer_name', 'price', 'total_amount')
   
   def clean_fuel(self):
     fuel_id = self.data.get('fuel')
