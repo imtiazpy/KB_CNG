@@ -1,0 +1,32 @@
+{% extends "management_base.html" %}
+
+{% block title %}
+{{ user.name }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header">
+      <h2 class="mb-0">Khan Brothers CNG</h2>
+    </div>
+    <div class="card-body">
+      <div class="form-group row">
+        <label for="name" class="col-sm-3 col-form-label">Name:</label>
+        <div class="col-sm-9">
+          <input type="text" name="name" class="form-control" id="name" value="{{ user.name }}" readonly>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="designation" class="col-sm-3 col-form-label">Designation:</label>
+        <div class="col-sm-9">
+          <input type="text" name="designation" class="form-control" id="designation" value="{{ user.designation }}" readonly>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
