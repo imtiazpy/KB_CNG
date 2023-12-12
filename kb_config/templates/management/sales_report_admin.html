@@ -1,11 +1,29 @@
 {% extends "management_base.html" %}
 
-{% load humanize %}
+{% load humanize static %}
 {% load customfilter %}
 
 {% block title %}
 Sales
 {% endblock %}
+
+
+{% block extra_css %}
+<style>
+  span.selection {
+    display: block;
+  }
+
+  span.select2-dropdown {
+    border: 1px solid #444;
+  }
+
+  .select2-results>.select2-results__options {
+    display: flex;
+    flex-direction: column;
+  }
+</style>
+{% endblock extra_css %}
 
 {% block content %}
 <h3 class="fw-bolder">Sales Report</h3>
@@ -15,18 +33,35 @@ Sales
     <div class="card rounded-0 shadow-sm blur">
       <div class="card-body">
         <div class="container-fluid">
-          <div class="d-flex w-100 mb-2">
+          <div class="row w-100 mb-3">
             <div class="col-auto flex-shrink-1 flex-grow-1">
-              <div class="row mx-0 w-100">
-                <div class="col-lg-1 col-md-2 col-sm-4"><label for="" class="control-label">Date</label></div>
-                <div class="col-lg-4 col-md-4 col-sm-6">
-                  <input type="date" class="form-control form-control-sm rounded-0" id="rep_date"
-                    value="{{report_date|date:'Y-m-d'}}">
+              <form class="row" method="GET" action="{% url 'sales_report_admin' %}" id="filter-form">
+                <div class="col-auto flex-shrink-1 flex-grow-1 mb-0">
+                  <input type="date" name="date" class="form-control form-control-sm rounded-0" id="rep_date"
+                    value="{{selected_date}}">
                 </div>
-              </div>
+                {% if users %}
+                <div class="col-auto flex-shrink-1 flex-grow-1">
+                  <div class="form-group mb-0">
+                    <select name="user" id="user" class="form-select form-select-sm rounded-0" required="required">
+                      {% for user in users %}
+                        <option value="{{user.id}}" {% if user.id == selected_user %}selected{% endif %}>
+                          {{user.name}}
+                        </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                {% endif %}
+                <div class="col-auto flex-shrink-1 flex-grow-1 mb-3">
+                  <button type="button" class="btn btn-success btn-sm rounded-md d-flex align-items-center" id="filter">
+                    <i class="fa-solid fa-sort mr-1"></i> Filter
+                  </button>
+                </div>
+              </form>
             </div>
             <div class="col-auto">
-              <a href="javascript:void(0)" id="print" class="btn btn-light border btn-sm rounded-0 bg-gradient"><i
+              <a href="javascript:void(0)" id="print" class="btn btn-success border btn-sm rounded-0 bg-gradient"><i
                   class="fa fa-print"></i> Print Report</a>
             </div>
           </div>
@@ -34,8 +69,9 @@ Sales
             <colgroup>
               <col width="5%">
               <col width="15%">
-              <col width="25%">
-              <col width="25%">
+              <col width="20%">
+              <col width="20%">
+              <col width="10%">
               <col width="10%">
               <col width="10%">
               <col width="10%">
@@ -48,6 +84,7 @@ Sales
                 <th class="text-center px-2 py-1 align-middle">Petrol</th>
                 <th class="text-center px-2 py-1 align-middle">Price</th>
                 <th class="text-center px-2 py-1 align-middle">Volume</th>
+                <th class="text-center px-2 py-1 align-middle">Manager</th>
                 <th class="text-center px-2 py-1 align-middle">Amount</th>
               </tr>
             </thead>
@@ -60,13 +97,14 @@ Sales
                 <td class="px-2 py-1 align-middle">{{sale.fuel}}</td>
                 <td class="text-end px-2 py-1 align-middle">{{ sale.price|floatformat:2|intcomma }} </td>
                 <td class="text-end px-2 py-1 align-middle">{{ sale.volume|floatformat:2|intcomma }} L</td>
+                <td class="text-end px-2 py-1 align-middle">{{ sale.manager }}</td>
                 <td class="text-end px-2 py-1 align-middle">{{ sale.total_amount|floatformat:2|intcomma }}</td>
               </tr>
               {% endfor %}
             </tbody>
             <tfoot>
               <tr>
-                <th colspan="6" class="text-center">Total Sale for ({{report_date|date:"F d, Y"}})</th>
+                <th colspan="6" class="text-center">Total Sale of ({{selected_date}}) by ({{ selected_user_name }})</th>
                 <th class="text-end fs-bolder">{{total_sale|floatformat:2|intcomma}}</th>
               </tr>
             </tfoot>
@@ -93,14 +131,23 @@ Sales
 {% block extra_script %}
 <script>
   $(function () {
-    $('#rep_date').change(function () {
-      location.href = "{% url 'sales_report_page' %}" + $(this).val()
-    })
+    $('#user').select2({
+      placeholder: "Please select here",
+      allowClear: true,
+      width: '100%',
+    });
+
     $('#report-table').dataTable({
       "scrollX": true,
       "scrollY": "200px",
       "autoWidth": false,
     })
+  
+
+    $('#filter').click(function () {
+      $('#filter-form').submit()
+    })
+
     $('#print').click(function () {
       const h = $('head').clone()
       const table = $('#report-table').clone()
@@ -118,7 +165,8 @@ Sales
           nw.close()
         }, 300)
       }, 300)
-    })
-  })
+    });
+
+  });
 </script>
 {% endblock extra_script %}

@@ -1,15 +1,21 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
 from django.views import generic
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.utils.decorators import method_decorator
+from django.urls import reverse_lazy
+from django.contrib.auth import get_user_model
 import json
 from datetime import datetime
 
 from .models import Fuel, Stock, Sale
 from .forms import SaveFuelForm, SaveStockForm, SaveSaleForm
+
+USER = get_user_model()
 
 class Dashboard(LoginRequiredMixin, generic.View):
 
@@ -305,10 +311,73 @@ def sales_report_view(request, report_date=None):
   day = report_date.strftime("%d")
 
   fuels = Fuel.objects.filter(status=1)
-  sales = Sale.objects.filter(fuel__id__in=fuels, date__month = month, date__day=day, date__year=year)
+  sales = Sale.objects.filter(manager = request.user, fuel__id__in=fuels, date__month = month, date__day=day, date__year=year)
 
   context['report_date'] = report_date
   context['sales'] = sales
   context['total_sale'] = sales.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
 
   return render(request, 'management/sales_report.html', context)
+
+
+
+def is_staff_user(user):
+  return user.is_staff
+
+@method_decorator(user_passes_test(is_staff_user, login_url=None), name='dispatch')
+class SalesReportAdminView(LoginRequiredMixin, generic.ListView):
+  model = Sale
+  template_name = 'management/sales_report_admin.html'
+  context_object_name = 'sales'
+  queryset = Sale.objects.all()
+
+  def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    filtered_sale = self.get_queryset()
+    user = self.request.GET.get('user')
+    context['users'] = USER.objects.filter(is_active=True)
+    context['selected_date'] = self.request.GET.get('date', datetime.now().strftime('%Y-%m-%d'))
+    context['total_sale'] = filtered_sale.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+
+    if user:
+      context['selected_user'] = int(user)
+      context['selected_user_name'] = USER.objects.get(id = user)
+
+    return context
+
+  def get_queryset(self):
+    queryset = super().get_queryset()
+    filters = {}
+
+    fuels = Fuel.objects.filter(status=1)
+    filters['fuel__id__in'] = fuels
+
+    date = self.request.GET.get('date')
+    if date:
+      report_date = datetime.strptime(date, "%Y-%m-%d")
+    else:
+      report_date = datetime.now()
+
+    year = report_date.strftime("%Y")
+    month = report_date.strftime("%m")
+    day = report_date.strftime("%d")
+
+    user_id = self.request.GET.get('user')
+
+    if user_id:
+      filters['manager'] = user_id
+
+    if year and month and day:
+      filters['date__month'] = month
+      filters['date__day'] = day
+      filters['date__year'] = year
+
+    if filters:
+      queryset = queryset.filter(**filters)
+    
+    return queryset
+
+  def dispatch(self, request, *args, **kwargs):
+    if not is_staff_user(request.user):
+      return redirect(reverse_lazy('sales_report_page'))
+    return super().dispatch(request, *args, **kwargs)

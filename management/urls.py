@@ -28,5 +28,6 @@ urlpatterns = [
   path('sales/delete/<int:pk>/', views.sales_delete_view, name='delete_sale'),
 
   path('sales/report/', views.sales_report_view, name='sales_report_page'),
-  path('sales/report/<str:report_date>/', views.sales_report_view, name='sales_report')
+  path('sales/report/<str:report_date>/', views.sales_report_view, name='sales_report'),
+  path('sales/admin/report/', views.SalesReportAdminView.as_view(), name='sales_report_admin')
 ]
