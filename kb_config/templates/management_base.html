@@ -171,6 +171,9 @@
   <script type="text/javascript" src="{% static 'select2/select2.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
 
+  {% block extra_script %}
+  {% endblock extra_script %}
+
   <script>
     $(function () {
       $('#topNav .nav-link').each(function () {
@@ -247,8 +250,6 @@
 
   </script>
 
-  {% block extra_script %}
-  {% endblock extra_script %}
 
 </body>
 
