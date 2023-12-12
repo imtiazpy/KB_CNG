@@ -4,9 +4,9 @@ from django.contrib import messages
 from django.views import generic
 from django.db.models import Sum, Q
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.decorators import method_decorator
+from django.utils import timezone
 from django.urls import reverse_lazy
 from django.contrib.auth import get_user_model
 import json
@@ -340,44 +340,29 @@ class SalesReportAdminView(LoginRequiredMixin, generic.ListView):
     context['total_sale'] = filtered_sale.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
 
     if user:
-      context['selected_user'] = int(user)
-      context['selected_user_name'] = USER.objects.get(id = user)
+      context['selected_user'] = int(user) if user.isdigit() else user
+      context['selected_user_name'] = USER.objects.get(id = user) if user.isdigit() else 'All'
 
     return context
 
   def get_queryset(self):
     queryset = super().get_queryset()
-    filters = {}
 
-    fuels = Fuel.objects.filter(status=1)
-    filters['fuel__id__in'] = fuels
+    filters = Q(fuel__id__in=Fuel.objects.filter(status=1))
 
     date = self.request.GET.get('date')
-    if date:
-      report_date = datetime.strptime(date, "%Y-%m-%d")
-    else:
-      report_date = datetime.now()
-
-    year = report_date.strftime("%Y")
-    month = report_date.strftime("%m")
-    day = report_date.strftime("%d")
+    report_date = timezone.datetime.strptime(date, "%Y-%m-%d") if date else timezone.now()
 
     user_id = self.request.GET.get('user')
+    if user_id and user_id.lower() == 'all':
+      pass
+    else:
+      filters &= Q(manager=user_id)
 
-    if user_id:
-      filters['manager'] = user_id
-
-    if year and month and day:
-      filters['date__month'] = month
-      filters['date__day'] = day
-      filters['date__year'] = year
+    if date:
+      filters &= Q(date=report_date)
 
     if filters:
-      queryset = queryset.filter(**filters)
+      queryset = queryset.filter(filters)
     
     return queryset
-
-  def dispatch(self, request, *args, **kwargs):
-    if not is_staff_user(request.user):
-      return redirect(reverse_lazy('sales_report_page'))
-    return super().dispatch(request, *args, **kwargs)

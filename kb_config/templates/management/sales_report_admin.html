@@ -22,6 +22,17 @@ Sales
     display: flex;
     flex-direction: column;
   }
+
+  .c-relative {
+    position: relative;
+  }
+
+  #clearDateBtn {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
 </style>
 {% endblock extra_css %}
 
@@ -36,9 +47,12 @@ Sales
           <div class="row w-100 mb-3">
             <div class="col-auto flex-shrink-1 flex-grow-1">
               <form class="row" method="GET" action="{% url 'sales_report_admin' %}" id="filter-form">
-                <div class="col-auto flex-shrink-1 flex-grow-1 mb-0">
+                <div class="c-relative col-auto flex-shrink-1 flex-grow-1 mb-0">
                   <input type="date" name="date" class="form-control form-control-sm rounded-0" id="rep_date"
                     value="{{selected_date}}">
+                  <button type="button" id="clearDateBtn" class="close btn btn-danger" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
                 </div>
                 {% if users %}
                 <div class="col-auto flex-shrink-1 flex-grow-1">
@@ -49,6 +63,8 @@ Sales
                           {{user.name}}
                         </option>
                       {% endfor %}
+                      <option value="all" {% if selected_user == 'all' %}selected{% endif %}>All</option>
+                      <option value="all" {% if selected_user == None %}selected{% endif %}>---</option>
                     </select>
                   </div>
                 </div>
@@ -147,6 +163,10 @@ Sales
     $('#filter').click(function () {
       $('#filter-form').submit()
     })
+
+    $('#clearDateBtn').click(function () {
+      $('#rep_date').val('');
+    });
 
     $('#print').click(function () {
       const h = $('head').clone()
