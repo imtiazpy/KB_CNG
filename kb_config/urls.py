@@ -9,7 +9,8 @@ urlpatterns = [
     path('services/', include('services.urls')),
     path('teams/', include('team.urls')),
     path('contact/', include('contact.urls')),
-    path('kbdash/', include('management.urls')),
+    # path('kbdash/', include('management.urls')),
+    path('fuel-dash/', include('fuelmanagement.urls')),
     path('users/', include('users.urls')),
 ]
 

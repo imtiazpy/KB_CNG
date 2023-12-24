@@ -63,6 +63,7 @@ LOCAL_APPS = [
   'contact',
   'management',
   'users',
+  'fuelmanagement',
 ]
 
 INSTALLED_APPS += THIRD_PARTY_APPS + LOCAL_APPS

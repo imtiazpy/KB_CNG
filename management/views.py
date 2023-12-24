@@ -12,7 +12,7 @@ from django.contrib.auth import get_user_model
 import json
 from datetime import datetime
 
-from .models import Fuel, Stock, Sale
+from .models import Product, Stock, Sale
 from .forms import SaveFuelForm, SaveStockForm, SaveSaleForm
 
 USER = get_user_model()
@@ -20,7 +20,7 @@ USER = get_user_model()
 class Dashboard(LoginRequiredMixin, generic.View):
 
   def get(self, request, *args, **kwargs):
-    fuels = Fuel.objects.filter(status=1)
+    fuels = Product.objects.filter(status=1)
     try:
       total_sale = Sale.objects.filter(fuel__id__in = fuels).aggregate(Sum('total_amount'))['total_amount__sum']
       if total_sale is None:
@@ -64,7 +64,10 @@ def fuel_list_view(request):
 
 @login_required
 def manage_fuel_view(request, pk=None):
-  """This view is used for rendering form for both addition and editing of the Fuel"""
+  """
+  This view is used for rendering form for both addition and editing of the Fuel
+  when the pk is passed, the view will be used for editing otherwise create view
+  """
   context = {}
   if pk is not None:
     context['fuel'] = Fuel.objects.get(id=pk)
